@@ -1,5 +1,6 @@
 ﻿using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Localization;
+using Nop.Core.Domain.Orders;
 using Nop.Data;
 
 namespace Nop.Services.Catalog;
@@ -18,7 +19,7 @@ public static class ProductExtensions
     /// If <paramref name="orderBy"/> is set to <c>Position</c> and passed <paramref name="productsQuery"/> is
     /// ordered sorting rule will be skipped
     /// </remarks>
-    public static IQueryable<Product> OrderBy(this IQueryable<Product> productsQuery, IRepository<LocalizedProperty> localizedPropertyRepository, Language currentLanguage, ProductSortingEnum orderBy)
+    public static IQueryable<Product> OrderBy(this IQueryable<Product> productsQuery, IRepository<LocalizedProperty> localizedPropertyRepository, Language currentLanguage, IRepository<OrderItem> orderItemRepository, ProductSortingEnum orderBy)
     {
         if (orderBy == ProductSortingEnum.NameAsc || orderBy == ProductSortingEnum.NameDesc)
         {
@@ -58,6 +59,29 @@ public static class ProductExtensions
 
             return productsQuery;
         }
+
+
+        if (orderBy == ProductSortingEnum.PopularOn)
+        {
+            var productOrderItemsQnty = from orderItemsProperty in orderItemRepository.Table
+                                        group orderItemsProperty by orderItemsProperty.ProductId into groupProperty
+                                        select new
+                                        {
+                                            ProductId = groupProperty.Key,
+                                            QtyItems = groupProperty.Sum(K => K.Quantity)
+                                        };
+
+            var query =
+                from product in productsQuery
+                join orderItemsQty in productOrderItemsQnty on product.Id equals orderItemsQty.ProductId into joined
+                from orderItemsQty in joined.DefaultIfEmpty()
+                orderby (orderItemsQty != null ? orderItemsQty.QtyItems : 0) descending
+                select product;
+
+            return query;
+
+        }
+
 
         return orderBy switch
         {

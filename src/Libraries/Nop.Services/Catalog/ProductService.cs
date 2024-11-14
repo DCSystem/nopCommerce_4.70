@@ -58,6 +58,7 @@ public partial class ProductService : IProductService
     protected readonly IRepository<Shipment> _shipmentRepository;
     protected readonly IRepository<StockQuantityHistory> _stockQuantityHistoryRepository;
     protected readonly IRepository<TierPrice> _tierPriceRepository;
+    protected readonly IRepository<OrderItem> _orderItemRepository;
     protected readonly ISearchPluginManager _searchPluginManager;
     protected readonly IStaticCacheManager _staticCacheManager;
     protected readonly IStoreMappingService _storeMappingService;
@@ -101,6 +102,7 @@ public partial class ProductService : IProductService
         IRepository<Shipment> shipmentRepository,
         IRepository<StockQuantityHistory> stockQuantityHistoryRepository,
         IRepository<TierPrice> tierPriceRepository,
+        IRepository<OrderItem> orderItemRepository,
         ISearchPluginManager searchPluginManager,
         IStaticCacheManager staticCacheManager,
         IStoreService storeService,
@@ -139,6 +141,7 @@ public partial class ProductService : IProductService
         _shipmentRepository = shipmentRepository;
         _stockQuantityHistoryRepository = stockQuantityHistoryRepository;
         _tierPriceRepository = tierPriceRepository;
+        _orderItemRepository = orderItemRepository;
         _searchPluginManager = searchPluginManager;
         _staticCacheManager = staticCacheManager;
         _storeMappingService = storeMappingService;
@@ -1144,7 +1147,7 @@ public partial class ProductService : IProductService
             }
         }
 
-        var products = await productsQuery.OrderBy(_localizedPropertyRepository, await _workContext.GetWorkingLanguageAsync(), orderBy).ToPagedListAsync(pageIndex, pageSize);
+        var products = await productsQuery.OrderBy(_localizedPropertyRepository, await _workContext.GetWorkingLanguageAsync(), _orderItemRepository, orderBy).ToPagedListAsync(pageIndex, pageSize);
 
         if (providerResults.Any() && orderBy == ProductSortingEnum.Position && !showHidden)
         {
