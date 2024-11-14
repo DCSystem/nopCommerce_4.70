@@ -191,6 +191,7 @@ public partial class ProductModelFactory : IProductModelFactory
 
         var result = new List<ProductSpecificationAttributeModel>();
 
+        var sortPsa = new List<int>();
         foreach (var psa in productSpecificationAttributes)
         {
             var option = await _specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(psa.SpecificationAttributeOptionId);
@@ -205,6 +206,7 @@ public partial class ProductModelFactory : IProductModelFactory
                     Name = await _localizationService.GetLocalizedAsync(attribute, x => x.Name)
                 };
                 result.Add(model);
+                sortPsa.Add(attribute.DisplayOrder);
             }
 
             var value = new ProductSpecificationAttributeValueModel
@@ -224,6 +226,11 @@ public partial class ProductModelFactory : IProductModelFactory
             model.Values.Add(value);
         }
 
+        var sortedList = result.Select((value, index) => new { value, index })
+                        .OrderBy(item => sortPsa[item.index])
+                        .ThenBy(item => item.index)
+                        .Select(item => item.value)
+                        .ToList();
         return result;
     }
 
