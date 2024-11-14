@@ -62,7 +62,7 @@ public partial class HomepageBestSellersViewComponent : NopViewComponent
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
             .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
-
+        products = await products.Where(p => p.StockQuantity > 0).ToListAsync();
         if (!products.Any())
             return Content("");
 

@@ -157,6 +157,7 @@ public partial class SpecificationAttributeService : ISpecificationAttributeServ
         var availableGroupsQuery =
             from sag in _specificationAttributeGroupRepository.Table
             where productAttributesForGroupQuery.Any(groupId => groupId == sag.Id)
+            orderby sag.DisplayOrder
             select sag;
 
         var key = _staticCacheManager.PrepareKeyForDefaultCache(NopCatalogDefaults.SpecificationAttributeGroupByProductCacheKey, productId);

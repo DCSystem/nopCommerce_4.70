@@ -34,7 +34,7 @@ public partial class HomepageProductsViewComponent : NopViewComponent
             .Where(p => _productService.ProductIsAvailable(p))
             //visible individually
             .Where(p => p.VisibleIndividually).ToListAsync();
-
+        products = await products.Where(p => p.StockQuantity > 0).ToListAsync();
         if (!products.Any())
             return Content("");
 

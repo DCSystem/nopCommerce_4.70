@@ -668,7 +668,11 @@ public partial class ProductService : IProductService
         });
 
         if (!featuredProducts.Any() && featuredProductIds.Any())
-            featuredProducts = await _productRepository.GetByIdsAsync(featuredProductIds, cache => default, false);
+        {
+            featuredProducts = (await _productRepository.GetByIdsAsync(featuredProductIds, cache => default, false));
+            featuredProducts = featuredProducts.Where(p => p.StockQuantity > 0).ToList();
+        }
+        
 
         return featuredProducts;
     }
