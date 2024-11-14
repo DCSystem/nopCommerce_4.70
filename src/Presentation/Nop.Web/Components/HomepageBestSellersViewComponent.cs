@@ -49,12 +49,17 @@ public partial class HomepageBestSellersViewComponent : NopViewComponent
 
         //load and cache report
         var store = await _storeContext.GetCurrentStoreAsync();
-        var report = await _staticCacheManager.GetAsync(
-            _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.HomepageBestsellersIdsKey,
-                store),
-            async () => await (await _orderReportService.BestSellersReportAsync(
-                storeId: store.Id,
-                pageSize: _catalogSettings.NumberOfBestsellersOnHomepage)).ToListAsync());
+        //var report = await _staticCacheManager.GetAsync( //отключен кэш
+        //    _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.HomepageBestsellersIdsKey,
+        //        store),
+        //    async () => await (await _orderReportService.BestSellersReportAsync(
+        //        storeId: store.Id,
+        //        pageSize: _catalogSettings.NumberOfBestsellersOnHomepage,
+        //        onlyStockProduct: true)).ToListAsync());
+        var report = await (await _orderReportService.BestSellersReportAsync(
+                            storeId: store.Id,
+                            pageSize: _catalogSettings.NumberOfBestsellersOnHomepage,
+                            onlyStockProduct: _catalogSettings.ShowBestsellersOnHomepageOnlyInStock)).ToListAsync();
 
         //load products
         var products = await (await _productService.GetProductsByIdsAsync(report.Select(x => x.ProductId).ToArray()))
@@ -62,7 +67,7 @@ public partial class HomepageBestSellersViewComponent : NopViewComponent
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
             .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
-        products = await products.Where(p => p.StockQuantity > 0).ToListAsync();
+        //products = await products.Where(p => p.StockQuantity > 0).ToListAsync();
         if (!products.Any())
             return Content("");
 

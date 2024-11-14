@@ -120,6 +120,7 @@ public partial interface IOrderReportService
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="showHidden">A value indicating whether to show hidden records</param>
+    /// <param name="onlyStockProduct">A value indicating product only stock</param>
     /// <returns>
     /// A task that represents the asynchronous operation
     /// The task result contains the result
@@ -138,7 +139,8 @@ public partial interface IOrderReportService
         OrderByEnum orderBy = OrderByEnum.OrderByQuantity,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
-        bool showHidden = false);
+        bool showHidden = false,
+        bool onlyStockProduct = false);
 
     /// <summary>
     /// Get a total amount of best sellers

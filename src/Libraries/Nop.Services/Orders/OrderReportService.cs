@@ -90,6 +90,7 @@ public partial class OrderReportService : IOrderReportService
     /// <param name="ss">Shipping status; null to load all records</param>
     /// <param name="billingCountryId">Billing country identifier; 0 to load all records</param>
     /// <param name="showHidden">A value indicating whether to show hidden records</param>
+    /// <param name="onlyStockProduct">A value indicating whether to show product only stock</param>
     /// <returns>Result query</returns>
     protected virtual IQueryable<OrderItem> SearchOrderItems(
         int categoryId = 0,
@@ -102,7 +103,8 @@ public partial class OrderReportService : IOrderReportService
         PaymentStatus? ps = null,
         ShippingStatus? ss = null,
         int billingCountryId = 0,
-        bool showHidden = false)
+        bool showHidden = false,
+        bool onlyStockProduct = false)
     {
         int? orderStatusId = null;
         if (os.HasValue)
@@ -129,7 +131,8 @@ public partial class OrderReportService : IOrderReportService
                   !o.Deleted && !p.Deleted &&
                   (vendorId == 0 || p.VendorId == vendorId) &&
                   (billingCountryId == 0 || oba.CountryId == billingCountryId) &&
-                  (showHidden || p.Published)
+                  (showHidden || p.Published) &&
+                  (!onlyStockProduct || p.StockQuantity > 0)
             select orderItem;
 
         if (categoryId > 0)
@@ -679,6 +682,7 @@ public partial class OrderReportService : IOrderReportService
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="showHidden">A value indicating whether to show hidden records</param>
+    /// <param name="onlyStockProduct">A value indicating whether to show product only stock</param>
     /// <returns>
     /// A task that represents the asynchronous operation
     /// The task result contains the result
@@ -697,9 +701,10 @@ public partial class OrderReportService : IOrderReportService
         OrderByEnum orderBy = OrderByEnum.OrderByQuantity,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
-        bool showHidden = false)
+        bool showHidden = false,
+        bool onlyStockProduct = false)
     {
-        var bestSellers = SearchOrderItems(categoryId, manufacturerId, storeId, vendorId, createdFromUtc, createdToUtc, os, ps, ss, billingCountryId, showHidden);
+        var bestSellers = SearchOrderItems(categoryId, manufacturerId, storeId, vendorId, createdFromUtc, createdToUtc, os, ps, ss, billingCountryId, showHidden, onlyStockProduct);
 
         var bsReport =
             //group by products

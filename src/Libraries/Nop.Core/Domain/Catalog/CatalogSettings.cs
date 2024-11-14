@@ -549,6 +549,12 @@ public partial class CatalogSettings : ISettings
     /// </summary>
     public bool EnableSpecificationAttributeFiltering { get; set; }
 
+
+    /// <summary>
+    /// Get or set a value indicating whether the specification attribute filtering is enabled on catalog pages
+    /// </summary>
+    public bool ShowBestsellersOnHomepageOnlyInStock { get; set; }
+
     /// <summary>
     /// Get or set a value indicating whether the "From" prices (based on price adjustments of combinations and attributes) are displayed on catalog pages
     /// </summary>
