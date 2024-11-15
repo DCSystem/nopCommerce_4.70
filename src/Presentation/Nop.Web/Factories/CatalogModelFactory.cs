@@ -754,6 +754,37 @@ public partial class CatalogModelFactory : ICatalogModelFactory
         var filterableOptions = await _specificationAttributeService
             .GetFiltrableSpecificationAttributeOptionsByCategoryIdAsync(category.Id);
 
+        if (_catalogSettings.EnableSpecificationAttributeFiltering && _catalogSettings.EnableAdditonalFilterSpecificationAttributeByProductInStore)
+        {
+            //Get product in Categories (if _catalogSettings.ShowProductsFromSubcategories have multiple Categories)  in current Store
+            var productsInStore = await _productService.SearchProductsAsync(
+                                               categoryIds: categoryIds,
+                                               storeId: currentStore.Id,
+                                               visibleIndividuallyOnly: true
+                                           );
+
+            // Get ProductSpecificationAttribute for productsInStore
+            var productIds = productsInStore.Select(p => p.Id).ToList();
+            var productSpecificationAttributes = new List<ProductSpecificationAttribute>();
+
+            foreach (var productId in productIds)
+            {
+                var attributes = await _specificationAttributeService.GetProductSpecificationAttributesAsync(productId);
+                productSpecificationAttributes.AddRange(attributes);
+            }
+
+            // Get Distinct ProductSpecificationAttributeId 
+            var specOptionIdsInStore = productSpecificationAttributes
+                .Select(psa => psa.SpecificationAttributeOptionId)
+                .Distinct()
+                .ToList();
+            // Get SpecificationAttributeOptions for produc
+            var specAttributeOptions = await _specificationAttributeService.GetSpecificationAttributeOptionsByIdsAsync(specOptionIdsInStore.ToArray());
+
+            filterableOptions = specAttributeOptions;
+        }
+
+
         if (_catalogSettings.EnableSpecificationAttributeFiltering)
         {
             model.SpecificationFilter = await PrepareSpecificationFilterModel(command.SpecificationOptionIds, filterableOptions);

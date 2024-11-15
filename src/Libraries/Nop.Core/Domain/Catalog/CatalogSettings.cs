@@ -556,6 +556,12 @@ public partial class CatalogSettings : ISettings
     public bool ShowBestsellersOnHomepageOnlyInStock { get; set; }
 
     /// <summary>
+    /// Gets or sets a value for Enable Additonal Filter Specification Attribute By Product In Store
+    /// </summary>
+    public bool EnableAdditonalFilterSpecificationAttributeByProductInStore { get; set; }
+
+
+    /// <summary>
     /// Get or set a value indicating whether the "From" prices (based on price adjustments of combinations and attributes) are displayed on catalog pages
     /// </summary>
     public bool DisplayFromPrices { get; set; }
