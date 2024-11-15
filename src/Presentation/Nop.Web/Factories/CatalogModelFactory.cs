@@ -766,10 +766,10 @@ public partial class CatalogModelFactory : ICatalogModelFactory
             // Get ProductSpecificationAttribute for productsInStore
             var productIds = productsInStore.Select(p => p.Id).ToList();
             var productSpecificationAttributes = new List<ProductSpecificationAttribute>();
-
+            // Add Allowfilter 
             foreach (var productId in productIds)
             {
-                var attributes = await _specificationAttributeService.GetProductSpecificationAttributesAsync(productId);
+                var attributes = await _specificationAttributeService.GetProductSpecificationAttributesAsync(productId, 0, true, null, null);
                 productSpecificationAttributes.AddRange(attributes);
             }
 
