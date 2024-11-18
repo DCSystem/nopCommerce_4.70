@@ -10,9 +10,9 @@
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OpCheckoutBillingAddressTop, additionalData = Model })
     @if (Model.ShipToSameAddressAllowed)
     {
-        <div class="section ship-to-same-address">
+        <div class="section ship-to-same-address" hidden>
             <p class="selector">
-                <input asp-for="ShipToSameAddress"/>
+                <input asp-for="ShipToSameAddress" checked /> @**@
                 <label asp-for="ShipToSameAddress">@T("Checkout.ShipToSameAddress")</label>
             </p>
         </div>
@@ -34,8 +34,12 @@
                     {
                         var addressLine = "";
                         addressLine += address.FirstName;
-                        addressLine += " " + address.LastName;
+                        @*addressLine += " " + address.LastName;*@
                         addressLine += ", " + address.AddressLine;
+                        if (address.PhoneEnabled && !string.IsNullOrEmpty(address.PhoneNumber))
+                        {
+                            addressLine += ", " + address.PhoneNumber;
+                        }
                         //how should we render "FormattedCustomAddressAttributes" here?
                         <option value="@(address.Id)">@(addressLine)</option>
                     }

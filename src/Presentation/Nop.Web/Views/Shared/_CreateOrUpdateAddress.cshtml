@@ -8,15 +8,15 @@
         <nop-required />
         <span asp-validation-for="FirstName"></span>
     </div>
-    <div class="inputs">
+    <div class="inputs" hidden>
         <label asp-for="LastName" asp-postfix=":"></label>
-        <input asp-for="LastName" />
+        <input asp-for="LastName" value="_" />
         <nop-required />
         <span asp-validation-for="LastName"></span>
     </div>
-    <div class="inputs">
+    <div class="inputs" hidden>
         <label asp-for="Email" asp-postfix=":"></label>
-        <input asp-for="Email" />
+        <input asp-for="Email" value="guest@yourstore.com" />
         <nop-required />
         <span asp-validation-for="Email"></span>
     </div>

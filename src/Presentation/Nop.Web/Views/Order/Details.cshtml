@@ -59,7 +59,7 @@
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageOverview, additionalData = Model })
         </div>
         <div class="order-details-area">
-            <div class="billing-info-wrap">
+            <div class="billing-info-wrap" hidden>
                 <div class="billing-info">
 	                <div class="title">
 	                    <strong>@T("Order.BillingAddress")</strong>
@@ -180,9 +180,9 @@
                             @if (!Model.PickupInStore)
                             {
                                 <li class="name">
-                                    @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName
+                                    @Model.ShippingAddress.FirstName @* @Model.ShippingAddress.LastName *@
                                 </li>
-                                <li class="email">
+                                <li class="email" hidden>
                                     @T("Order.Email"): @Model.ShippingAddress.Email
                                 </li>
                                 if (Model.ShippingAddress.PhoneEnabled)

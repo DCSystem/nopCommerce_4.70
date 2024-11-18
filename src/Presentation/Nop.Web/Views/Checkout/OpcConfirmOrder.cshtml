@@ -26,7 +26,7 @@
     }
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OpCheckoutConfirmBottom, additionalData = Model })
     <div class="section order-summary">
-        @await Component.InvokeAsync(typeof(OrderSummaryViewComponent), new { prepareAndDisplayOrderReviewData = true })
+        @await Component.InvokeAsync(typeof(OrderSummaryViewComponent), new { prepareAndDisplayOrderReviewData = false })
     </div>
     @if (string.IsNullOrEmpty(Model.MinOrderTotalWarning) && Model.TermsOfServiceOnOrderConfirmPage)
     {
@@ -54,6 +54,12 @@
             }
         </div>
     }
+    <button type="button" id="checkoutConfirmButton" onclick="ConfirmOrder.save()">@T("Checkout.ConfirmButton")</button>
+    <script>
+        jQuery(function() {
+        jQuery('#checkoutConfirmButton').click();
+        });
+    </script>
     @if (Model.DisplayCaptcha)
     {
         <nop-captcha />
